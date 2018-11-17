@@ -1,0 +1,180 @@
+genD<-read.csv("general_data.csv")
+esd<-read.csv("employee_survey_data.csv")
+msd<-read.csv("manager_survey_data.csv")
+#merge all three
+setdiff(genD$CustomerID, esd$CustomerID)#IDs are same
+all<-merge(genD, esd, by="EmployeeID")
+setdiff(genD$CustomerID, msd$CustomerID)#IDs are same
+all<-merge(all, msd, by="EmployeeID")
+#check structure and summary of the dataframe
+str(all)
+summary(all)
+#check if duplicate rows or NA values are present
+sum(is.na(all))
+sum(duplicated(all))
+#convert numeric variables to numeric
+all[,c(2, 6, 9, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24)]<-sapply(all[,c(2, 6, 9, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24)], as.numeric)
+all[,c(3, 4, 5, 7, 8, 10, 11, 12, 13, 16, 25, 26, 27, 28, 29)]<-lapply(all[,c(3, 4, 5, 7, 8, 10, 11, 12, 13, 16, 25, 26, 27, 28, 29)], as.factor)
+str(all)
+#variable wise analysis
+#categorical variables
+
+#Attrition
+table(all$Attrition)
+sum(is.na(all$Attrition))
+
+#BusinessTravel
+table(all$BusinessTravel)
+sum(is.na(all$BusinessTravel))
+
+#Department
+table(all$Department)
+sum(is.na(all$Department))
+
+#Education
+table(all$Education)
+sum(is.na(all$Education))
+
+#EducationField
+table(all$EducationField)
+sum(is.na(all$EducationField))
+
+#Gender
+table(all$Gender)
+sum(is.na(all$Gender))
+
+#JobLevel
+table(all$JobLevel)
+sum(is.na(all$JobLevel))
+
+#JobRole
+table(all$JobRole)
+sum(is.na(all$JobRole))
+
+#MaritalStatus
+table(all$MaritalStatus)
+sum(is.na(all$MaritalStatus))
+
+#Over18
+table(all$Over18)
+sum(is.na(all$Over18))
+all<-all[,colnames(all)!="Over18"]#Only single value present
+
+#EnvironmentSatisfaction
+table(all$EnvironmentSatisfaction)
+sum(is.na(all$EnvironmentSatisfaction))
+all$EnvironmentSatisfaction[is.na(all$EnvironmentSatisfaction)]<-which.max(summary(all$EnvironmentSatisfaction))#Removing NAs with maximum frequency value
+
+#JobSatisfaction
+table(all$JobSatisfaction)
+sum(is.na(all$JobSatisfaction))
+all$JobSatisfaction[is.na(all$JobSatisfaction)]<-which.max(summary(all$JobSatisfaction))#Removing NAs with maximum frequency value
+
+#WorkLifeBalance
+table(all$WorkLifeBalance)
+sum(is.na(all$WorkLifeBalance))
+all$WorkLifeBalance[is.na(all$WorkLifeBalance)]<-which.max(summary(all$WorkLifeBalance))#Removing NAs with maximum frequency value
+
+#JobInvolvement
+table(all$JobInvolvement)
+sum(is.na(all$JobInvolvement))
+
+#PerformanceRating
+table(all$PerformanceRating)
+sum(is.na(all$PerformanceRating))
+
+#working on numeric variables
+
+#Age
+boxplot(all$Age)
+sum(is.na(all$Age))
+
+#DistanceFromHome
+boxplot(all$DistanceFromHome)
+sum(is.na(all$DistanceFromHome))
+
+#EmployeeCount
+boxplot(all$EmployeeCount)
+sum(is.na(all$EmployeeCount))
+all<-all[,colnames(all)!="EmployeeCount"]#Only single value present
+
+#MonthlyIncome
+boxplot(all$MonthlyIncome)
+sum(is.na(all$MonthlyIncome))
+stat1<-quantile(all$MonthlyIncome, 0.92)
+all$MonthlyIncome[all$MonthlyIncome>stat1]<-stat1
+
+#NumCompaniesWorked
+boxplot(all$NumCompaniesWorked)
+sum(is.na(all$NumCompaniesWorked))
+stat2<-quantile(all$NumCompaniesWorked, 0.95, na.rm = TRUE)
+all$NumCompaniesWorked[all$NumCompaniesWorked>stat2]<-stat2
+all$NumCompaniesWorked[is.na(all$NumCompaniesWorked)]<-median(all$NumCompaniesWorked, na.rm = TRUE)
+
+#PercentSalaryHike
+boxplot(all$PercentSalaryHike)
+sum(is.na(all$PercentSalaryHike))
+
+#StandardHours
+boxplot(all$StandardHours)
+sum(is.na(all$StandardHours))
+all<-all[,colnames(all)!="StandardHours"]#Only single value present
+
+#StockOptionLevel
+boxplot(all$StockOptionLevel)
+sum(is.na(all$StockOptionLevel))
+
+#TotalWorkingYears
+boxplot(all$TotalWorkingYears)
+sum(is.na(all$TotalWorkingYears))
+stat3<-quantile(all$TotalWorkingYears, 0.95, na.rm = TRUE)
+all$TotalWorkingYears[all$TotalWorkingYears>stat3]<-stat3
+all$TotalWorkingYears[is.na(all$TotalWorkingYears)]<-median(all$TotalWorkingYears, na.rm = TRUE)
+
+#TrainingTimesLastYear
+boxplot(all$TrainingTimesLastYear)
+sum(is.na(all$TrainingTimesLastYear))
+#Not removing the Outliers because span is very low
+
+#YearsAtCompany
+boxplot(all$YearsAtCompany)
+sum(is.na(all$YearsAtCompany))
+stat4<-quantile(all$YearsAtCompany, 0.92, na.rm = TRUE)
+all$YearsAtCompany[all$YearsAtCompany>stat4]<-stat4
+
+#YearsSinceLastPromotion
+boxplot(all$YearsSinceLastPromotion)
+sum(is.na(all$YearsSinceLastPromotion))
+#not removing outliers because range is very low
+
+#YearsWithCurrManager
+boxplot(all$YearsWithCurrManager)
+sum(is.na(all$YearsWithCurrManager))
+stat5<-quantile(all$YearsWithCurrManager, 0.99, na.rm = TRUE)
+all$YearsWithCurrManager[all$YearsWithCurrManager>stat5]<-stat5
+
+sum(is.na(all))
+
+#scale all the numeric variables
+all[,c(2, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21)]<-scale(all[,c(2, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21)])
+
+#creating dummy variables
+
+#changing two levels of Attrition to 0 and 1
+levels(all$Attrition)<-c(0,1)
+all$Attrition<-as.numeric(levels(all$Attrition))[all$Attrition]
+
+#changing two levels of Gender to 0 and 1
+levels(all$Gender)<-c(0,1)
+all$Gender<-as.numeric(levels(all$Gender))[all$Gender]
+
+#changing two levels of PerformanceRating to 0 and 1
+levels(all$PerformanceRating)<-c(0,1)
+all$PerformanceRating<-as.numeric(levels(all$PerformanceRating))[all$PerformanceRating]
+
+#creating dummies for all other factors
+
+all<-cbind(all[,-c(4, 5, 7, 8, 10, 11, 12, 22, 23, 24, 25)], data.frame(sapply(all[,c(4, 5, 7, 8, 10, 11, 12, 22, 23, 24, 25)], function(x){
+                          model.matrix(~x, data=all[,c(4, 5, 7, 8, 10, 11, 12, 22, 23, 24, 25)])[,-1]
+                            })))
+
