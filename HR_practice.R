@@ -214,7 +214,7 @@ model_3<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWo
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 
 summary(model_3)
 vif(model_3)
@@ -232,7 +232,7 @@ model_4<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWo
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_4)
 
 
@@ -249,7 +249,7 @@ model_5<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWo
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_5)
 
 
@@ -266,7 +266,7 @@ model_6<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWo
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_6)
 
 
@@ -283,7 +283,7 @@ model_7<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWo
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_7)
 
 
@@ -300,7 +300,7 @@ model_8<-glm(Attrition ~ Age + MonthlyIncome + NumCompaniesWorked +
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_8)
 
 
@@ -318,7 +318,7 @@ model_9<-glm(Attrition ~ Age + NumCompaniesWorked +
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_9)
 
 
@@ -334,7 +334,7 @@ model_10<-glm(Attrition ~ Age + NumCompaniesWorked +
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_10)
 
 #Removal of EducationField.xMarketing 
@@ -349,7 +349,7 @@ model_11<-glm(Attrition ~ Age + NumCompaniesWorked +
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_11)
 
 
@@ -365,7 +365,7 @@ model_12<-glm(Attrition ~ Age + NumCompaniesWorked +
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_12)
 
 
@@ -379,7 +379,7 @@ model_13<-glm(Attrition ~ Age + NumCompaniesWorked +
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_13)
 
 #Removal of JobLevel.x2 
@@ -392,7 +392,7 @@ model_14<-glm(Attrition ~ Age + NumCompaniesWorked +
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_14)
 
 
@@ -406,7 +406,7 @@ model_15<-glm(Attrition ~ Age + NumCompaniesWorked +
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_15)
 
 
@@ -419,7 +419,7 @@ model_16<-glm(Attrition ~ Age + NumCompaniesWorked +
                 JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
                 EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
 summary(model_16)
 
 
@@ -433,7 +433,7 @@ model_17<-glm(Attrition ~ Age + NumCompaniesWorked +
                 JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
                 EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4  ,data=train,family = "binomial")
 summary(model_17)
 
 
@@ -447,7 +447,7 @@ model_18<-glm(Attrition ~ Age + NumCompaniesWorked +
                 JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
                 EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4  ,data=train,family = "binomial")
 summary(model_18)
 
 
@@ -460,7 +460,7 @@ model_19<-glm(Attrition ~ Age + NumCompaniesWorked +
                 JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
                 EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4  ,data=train,family = "binomial")
 summary(model_19)
 
 
@@ -472,7 +472,7 @@ model_20<-glm(Attrition ~ Age + NumCompaniesWorked +
                 Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
                 EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4  ,data=train,family = "binomial")
 summary(model_20)
 
 
@@ -484,7 +484,7 @@ model_21<-glm(Attrition ~ Age + NumCompaniesWorked +
                 Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
                 EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  - 1,data=train,family = "binomial")
+                WorkLifeBalance.x4  ,data=train,family = "binomial")
 summary(model_21)
 
 
@@ -596,21 +596,6 @@ summary(model_30)
 vif(model_30)
 
 
-#prediction of output(price) based on the test data         
-Predict_1 <- predict(model_30,test[,-1])
-test$test_attrition <- Predict_1
-
-
-#check for correlation between predicted and actual attrition to verify accuracy of the model
-r <- cor(test$Attrition,test$test_attrition)
-rsquared <- cor(test$Attrition,test$test_attrition)^2
-rsquared
-
-#plot for predicted and actual attrition of the test data to see the trend.
-test$sequence<-seq(1:nrow(test))
-ggplot(test,aes(sequence,Attrition))+geom_line(colour='red')+geom_line(aes(sequence,test_attrition))
-
-
 #Evaluation of model
 
 Predict_2 <- predict(model_30,type="response",test[,-1])
@@ -618,4 +603,12 @@ summary(Predict_2)
 test$prob<-Predict_2
 View(test)
 
+test_pred_attrition<-factor(ifelse(Predict_2>0.145,"yes","no"))
+test_actual_attrition<-factor(ifelse(test$Attrition==1,"yes","no"))
+
+table_1<-table(test_actual_attrition,test_pred_attrition)
+
+test_conf<-confusionMatrix(test_pred_attrition,test_actual_attrition,positive = "yes")
+conf_values<-test_conf
+conf_values
 
