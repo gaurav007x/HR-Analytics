@@ -178,6 +178,190 @@ all<-cbind(all[,-c(4, 5, 7, 8, 10, 11, 12, 22, 23, 24, 25)], data.frame(sapply(a
   model.matrix(~x, data=all[,c(4, 5, 7, 8, 10, 11, 12, 22, 23, 24, 25)])[,-1]
 })))
 
+
+
+library(stringr)
+library(lubridate)
+library(dplyr)
+
+####Loading the datasets####
+in_time <- read.csv("in_time.csv",stringsAsFactors = FALSE)
+out_time <- read.csv("out_time.csv",stringsAsFactors = FALSE)
+
+
+
+#### Cleaning in-time and out time####
+#First Column Name
+colnames(in_time)[1] <- "CustomerID"
+colnames(out_time)[1] <- "CustomerID"
+
+#Checking na values in both data set
+in_na<-which(is.na(in_time))
+out_na<-which(is.na(out_time))
+sum(in_na!=out_na)
+
+
+customer_id <- in_time$CustomerID
+
+in_time1 <- in_time[,-1]
+out_time1 <- out_time[,-1]
+
+#converting into date-time format
+
+for(i in 1:ncol(in_time1)){
+  
+  in_time1[,i] <- as.POSIXct(in_time1[,i], format = "%Y-%m-%d %H:%M:%S")
+  
+}
+
+for(i in 1:ncol(out_time1)){
+  
+  out_time1[,i] <- as.POSIXct(out_time1[,i], format = "%Y-%m-%d %H:%M:%S")
+  
+}
+
+
+#### working on dataset####
+
+#Creating data frame for storage
+ave_working_hour <- data.frame(matrix(nrow = nrow(in_time1), ncol = 12))
+colnames(ave_working_hour)<-c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+ave_working_hour[is.na(ave_working_hour)] <- 0
+
+#Creating difference column for calculating difference in time.
+
+difference<-(out_time1-in_time1)*60
+difference[is.na(difference)] <- 0
+difference<-mutate_all(difference, function(x) as.numeric(as.character(x)))
+
+#Creating column name for 'FOR' Condition
+colname<-as.Date(substring(colnames(in_time1),2),format = "%Y.%m.%d")
+sum(is.na(colname))
+
+#Creation of monthly avg dataset 
+for (i in 1:nrow(in_time1)) {
+  sum=difference[i,1]
+  Days=0
+  
+  for (j in 2:ncol(in_time1)) {
+    
+    { if((month(colname[j])!=month(colname[j-1]))| j==ncol(in_time1))
+    {
+      ave_working_hour[i,month(colname[j-1])]=sum/Days
+      
+      sum=difference[i,j]
+      
+      Days=0
+      
+      
+    }
+      
+      
+      
+      else{
+        sum=sum+difference[i,j]
+        Days=Days+1
+      }
+    }   
+    
+  } 
+}
+
+all_updated<-cbind(all,ave_working_hour)
+str(all_updated)
+
+
+
+#data cleanup for new variables
+boxplot(all_updated$Jan)
+sum(is.na(all_updated$Jan))
+stat6<-quantile(all_updated$Jan, 0.95, na.rm = TRUE)
+all_updated$Jan[all_updated$Jan>stat6]<-stat6
+
+
+boxplot(all_updated$Feb)
+sum(is.na(all_updated$Feb))
+stat7<-quantile(all_updated$Feb, 0.95, na.rm = TRUE)
+all_updated$Feb[all_updated$Feb>stat7]<-stat7
+
+
+boxplot(all_updated$Mar)
+sum(is.na(all_updated$Mar))
+stat8<-quantile(all_updated$Mar, 0.95, na.rm = TRUE)
+all_updated$Mar[all_updated$Mar>stat8]<-stat8
+
+
+boxplot(all_updated$Apr)
+sum(is.na(all_updated$Apr))
+stat9<-quantile(all_updated$Apr, 0.95, na.rm = TRUE)
+all_updated$Apr[all_updated$Apr>stat9]<-stat9
+
+
+
+boxplot(all_updated$May)
+sum(is.na(all_updated$May))
+stat10<-quantile(all_updated$May, 0.95, na.rm = TRUE)
+all_updated$May[all_updated$May>stat10]<-stat10
+
+
+boxplot(all_updated$Jun)
+sum(is.na(all_updated$Jun))
+stat11<-quantile(all_updated$Jun, 0.95, na.rm = TRUE)
+all_updated$Jun[all_updated$Jun>stat11]<-stat11
+
+
+boxplot(all_updated$Jul)
+sum(is.na(all_updated$Jul))
+stat12<-quantile(all_updated$Jul, 0.95, na.rm = TRUE)
+all_updated$Jul[all_updated$Jul>stat12]<-stat12
+
+
+boxplot(all_updated$Aug)
+sum(is.na(all_updated$Aug))
+stat13<-quantile(all_updated$Aug, 0.95, na.rm = TRUE)
+all_updated$Aug[all_updated$Aug>stat13]<-stat13
+
+
+boxplot(all_updated$Sep)
+sum(is.na(all_updated$Sep))
+stat14<-quantile(all_updated$Sep, 0.95, na.rm = TRUE)
+all_updated$Sep[all_updated$Sep>stat14]<-stat14
+
+
+boxplot(all_updated$Oct)
+sum(is.na(all_updated$Oct))
+stat15<-quantile(all_updated$Oct, 0.95, na.rm = TRUE)
+all_updated$Oct[all_updated$Oct>stat15]<-stat15
+
+
+boxplot(all_updated$Nov)
+sum(is.na(all_updated$Nov))
+stat16<-quantile(all_updated$Nov, 0.95, na.rm = TRUE)
+all_updated$Nov[all_updated$Nov>stat16]<-stat16
+
+
+boxplot(all_updated$Dec)
+sum(is.na(all_updated$Dec))
+stat17<-quantile(all_updated$Dec, 0.95, na.rm = TRUE)
+all_updated$Dec[all_updated$Dec>stat17]<-stat17
+
+
+#scaling of the new variables
+all_updated$Jan<-scale(all_updated$Jan)
+all_updated$Feb<-scale(all_updated$Feb)
+all_updated$Mar<-scale(all_updated$Mar)
+all_updated$Apr<-scale(all_updated$Apr)
+all_updated$May<-scale(all_updated$May)
+all_updated$Jun<-scale(all_updated$Jun)
+all_updated$Jul<-scale(all_updated$Jul)
+all_updated$Aug<-scale(all_updated$Aug)
+all_updated$Sep<-scale(all_updated$Sep)
+all_updated$Oct<-scale(all_updated$Oct)
+all_updated$Nov<-scale(all_updated$Nov)
+all_updated$Dec<-scale(all_updated$Dec)
+
+
+
 library(MASS)
 library(car)
 library(e1071)
@@ -185,18 +369,19 @@ library(caret)
 library(cowplot)
 library(caTools)
 
-
+#deviding the data set into training and testing data
 set.seed(100)
-indices=sample.split(all$Attrition,SplitRatio=0.7)
-train=all[indices,]
-test=all[!(indices),]
-str(all)
+indices=sample.split(all_updated$Attrition,SplitRatio=0.7)
+train=all_updated[indices,]
+test=all_updated[!(indices),]
+str(all_updated)
 
-
+#modelling
 model_1<-glm(Attrition~.-1,data=train,family ="binomial")
 summary(model_1)
 
 
+#checking for multi colinearity in the variables
 model_2<-stepAIC(model_1,direction="both")
 summary(model_2)
 vif(model_2)
@@ -206,360 +391,359 @@ model_3<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWo
                StockOptionLevel + TotalWorkingYears + TrainingTimesLastYear + 
                YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-               Department.xSales + Education.x3 + Education.x4 + Education.x5 + 
-               EducationField.xLife.Sciences + EducationField.xMarketing + 
-               EducationField.xMedical + EducationField.xOther + EducationField.xTechnical.Degree + 
+               Department.xSales + Education.x5 + EducationField.xMarketing + 
+               EducationField.xOther + EducationField.xTechnical.Degree + 
                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 + Jan + Feb + Jul + 
+               Sep + Oct ,data=train,family = "binomial")
 
 summary(model_3)
 vif(model_3)
 
 #Removal of stockoptionlevel
 model_4<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWorked + 
-                TotalWorkingYears + TrainingTimesLastYear + 
+               TotalWorkingYears + TrainingTimesLastYear + 
                YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-               Department.xSales + Education.x3 + Education.x4 + Education.x5 + 
-               EducationField.xLife.Sciences + EducationField.xMarketing + 
-               EducationField.xMedical + EducationField.xOther + EducationField.xTechnical.Degree + 
+               Department.xSales + Education.x5 + EducationField.xMarketing + 
+               EducationField.xOther + EducationField.xTechnical.Degree + 
                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 + Jan + Feb + Jul + 
+               Sep + Oct ,data=train,family = "binomial")
 summary(model_4)
+vif(model_4)
 
 
-#Removal of Educatio.x4
+#Removal of Educatio.x5
 model_5<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWorked + 
                TotalWorkingYears + TrainingTimesLastYear + 
                YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-               Department.xSales + Education.x3 + Education.x5 + 
-               EducationField.xLife.Sciences + EducationField.xMarketing + 
-               EducationField.xMedical + EducationField.xOther + EducationField.xTechnical.Degree + 
+               Department.xSales + EducationField.xMarketing + 
+               EducationField.xOther + EducationField.xTechnical.Degree + 
                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 + Jan + Feb + Jul + 
+               Sep + Oct ,data=train,family = "binomial")
 summary(model_5)
+vif(model_5)
 
-
-#Removal of Educatio.x3
+#Removal of EducationField.xMarketing
 model_6<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWorked + 
                TotalWorkingYears + TrainingTimesLastYear + 
                YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-               Department.xSales+ Education.x5 + 
-               EducationField.xLife.Sciences + EducationField.xMarketing + 
-               EducationField.xMedical + EducationField.xOther + EducationField.xTechnical.Degree + 
+               Department.xSales +EducationField.xOther + EducationField.xTechnical.Degree + 
                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 + Jan + Feb + Jul + 
+               Sep + Oct ,data=train,family = "binomial")
 summary(model_6)
+vif(model_6)
 
-
-#Removal of Educatio.x5
+#Removal of EducationField.xOther
 model_7<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWorked + 
                TotalWorkingYears + TrainingTimesLastYear + 
                YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-               Department.xSales + 
-               EducationField.xLife.Sciences + EducationField.xMarketing + 
-               EducationField.xMedical + EducationField.xOther + EducationField.xTechnical.Degree + 
+               Department.xSales+ EducationField.xTechnical.Degree + 
                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+               WorkLifeBalance.x4 + JobInvolvement.x3 + Jan + Feb + Jul + 
+               Sep + Oct ,data=train,family = "binomial")
 summary(model_7)
+vif(model_7)
+
+#Removal of EducationField.xTechnical.Degree
+model_8<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWorked + 
+               TotalWorkingYears + TrainingTimesLastYear + 
+               YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
+               BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
+               Department.xSales+JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
+               JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
+               MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+               EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
+               JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
+               WorkLifeBalance.x4 + JobInvolvement.x3 + Jan + Feb + Jul + 
+               Sep + Oct ,data=train,family = "binomial")
+summary(model_8)
+vif(model_8)
+
+
+#Removal of Jan
+model_9<-glm(Attrition ~ Age + DistanceFromHome + MonthlyIncome + NumCompaniesWorked + 
+               TotalWorkingYears + TrainingTimesLastYear + 
+               YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
+               BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
+               Department.xSales+JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
+               JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
+               MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+               EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
+               JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
+               WorkLifeBalance.x4 + JobInvolvement.x3 + Feb + Jul + 
+               Sep + Oct ,data=train,family = "binomial")
+summary(model_9)
+vif(model_9)
 
 
 #Removal of DistanceFromHome
-model_8<-glm(Attrition ~ Age + MonthlyIncome + NumCompaniesWorked + 
-               TotalWorkingYears + TrainingTimesLastYear + 
-               YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
-               BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-               Department.xSales + 
-               EducationField.xLife.Sciences + EducationField.xMarketing + 
-               EducationField.xMedical + EducationField.xOther + EducationField.xTechnical.Degree + 
-               JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
-               JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
-               MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
-               EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
-               JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
-summary(model_8)
-
-
-
-#Removal of MonthlyIncome
-model_9<-glm(Attrition ~ Age + NumCompaniesWorked + 
-               TotalWorkingYears + TrainingTimesLastYear + 
-               YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
-               BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-               Department.xSales + 
-               EducationField.xLife.Sciences + EducationField.xMarketing + 
-               EducationField.xMedical + EducationField.xOther + EducationField.xTechnical.Degree + 
-               JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
-               JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
-               MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
-               EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
-               JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-               WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
-summary(model_9)
-
-
-#Removal of EducationField.xLife.Sciences
-model_10<-glm(Attrition ~ Age + NumCompaniesWorked + 
+model_10<-glm(Attrition ~ Age+ MonthlyIncome + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales + EducationField.xMarketing +EducationField.xMedical + EducationField.xOther + 
-                EducationField.xTechnical.Degree + 
-                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
+                Department.xSales+JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                 JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3 + Feb + Jul + 
+                Sep + Oct ,data=train,family = "binomial")
 summary(model_10)
+vif(model_10)
 
-#Removal of EducationField.xMarketing 
-model_11<-glm(Attrition ~ Age + NumCompaniesWorked + 
+#Removal of Feb
+model_11<-glm(Attrition ~ Age+ MonthlyIncome + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales+EducationField.xMedical + EducationField.xOther + 
-                EducationField.xTechnical.Degree + 
-                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
+                Department.xSales+JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                 JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3+ Jul + 
+                Sep + Oct ,data=train,family = "binomial")
 summary(model_11)
+vif(model_11)
 
 
-#Removal of EducationField.xMedical 
+#Removal of MonthlyIncome 
 model_12<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales+ EducationField.xOther + 
-                EducationField.xTechnical.Degree + 
-                JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
+                Department.xSales+JobLevel.x2 + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
                 JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3+ Jul + 
+                Sep + Oct ,data=train,family = "binomial")
 summary(model_12)
+vif(model_12)
 
 
-#Removal of EducationField.xTechnical.Degree
+
+#Removal of JobLevel.x2 
 model_13<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales+ EducationField.xOther + JobLevel.x2 + JobRole.xLaboratory.Technician + 
-                JobRole.xResearch.Director + JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
+                Department.xSales + JobRole.xLaboratory.Technician + JobRole.xResearch.Director + 
+                JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3+ Jul + 
+                Sep + Oct ,data=train,family = "binomial")
 summary(model_13)
+vif(model_13)
 
-#Removal of JobLevel.x2 
+
+
+#Removal of JobRole.xLaboratory.Technician  
 model_14<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales+ EducationField.xOther + JobRole.xLaboratory.Technician + 
-                JobRole.xResearch.Director + JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
+                Department.xSales + JobRole.xResearch.Director + 
+                JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3+ Jul + 
+                Sep + Oct ,data=train,family = "binomial")
 summary(model_14)
+vif(model_14)
 
-
-#Removal of EducationField.xOther 
+#Removal of JobRole.xResearch.Scientist
 model_15<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales + JobRole.xLaboratory.Technician + 
-                JobRole.xResearch.Director + JobRole.xResearch.Scientist + JobRole.xSales.Executive + 
+                Department.xSales + JobRole.xResearch.Director + 
+                JobRole.xSales.Executive + 
                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
                 EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + JobInvolvement.x3+ Jul + 
+                Sep + Oct ,data=train,family = "binomial")
 summary(model_15)
+vif(model_15)
 
-
-#Removal of JobRole.xLaboratory.Technician  
+#Removal of JobInvolvement.x3  
 model_16<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales +JobRole.xResearch.Director + JobRole.xResearch.Scientist + 
-                JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
+                Department.xSales + JobRole.xResearch.Director + 
+                JobRole.xSales.Executive + 
+                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4 + JobInvolvement.x3 ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + Jul +Sep + Oct ,data=train,family = "binomial")
 summary(model_16)
+vif(model_16)
 
 
-
-#Removal of JobInvolvement.x3  
+#Removal of JobRole.xResearch.Director
 model_17<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales +JobRole.xResearch.Director + JobRole.xResearch.Scientist + 
-                JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
+                Department.xSales  + 
+                JobRole.xSales.Executive + 
+                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + Jul +Sep + Oct ,data=train,family = "binomial")
 summary(model_17)
+vif(model_17)
 
 
-
-#Removal of JobRole.xResearch.Scientist   
+#Removal of JobRole.xSales.Executive   
 model_18<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales +JobRole.xResearch.Director +  
-                JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + Jul +Sep + Oct ,data=train,family = "binomial")
 summary(model_18)
+vif(model_18)
 
-
-#Removal of JobRole.xResearch.Director   
+#Removal of JobSatisfaction.x3   
 model_19<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales +  
-                JobRole.xSales.Executive +MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + 
                 JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  ,data=train,family = "binomial")
+                WorkLifeBalance.x4 + Jul +Sep + Oct ,data=train,family = "binomial")
 summary(model_19)
+vif(model_19)
 
-
-#Removal of JobRole.xSales.Executive  
+#Removal of JobSatisfaction.x2  
 model_20<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + JobSatisfaction.x3 + 
-                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  ,data=train,family = "binomial")
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
+                WorkLifeBalance.x4 + Jul +Sep + Oct ,data=train,family = "binomial")
 summary(model_20)
+vif(model_20)
 
-
-#Removal of JobSatisfaction.x3   
+#Removal of WorkLifeBalance.x4   
 model_21<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + JobSatisfaction.x2 + 
-                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4  ,data=train,family = "binomial")
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
+                Jul +Sep + Oct ,data=train,family = "binomial")
 summary(model_21)
+vif(model_21)
 
-
-#Removal of JobSatisfaction.x2  
+#Removal of WorkLifeBalance.x2  
 model_22<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3 + 
-                WorkLifeBalance.x4,data=train,family = "binomial")
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 +WorkLifeBalance.x3 + 
+                Jul +Sep + Oct ,data=train,family = "binomial")
 summary(model_22)
 vif(model_22)
 
 
 
 
-#Removal of  WorkLifeBalance.x4 
+#Removal of  Jul
 model_23<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3  
-                ,data=train,family = "binomial")
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 +WorkLifeBalance.x3 + 
+                Sep + Oct ,data=train,family = "binomial")
 summary(model_23)
 vif(model_23)
 
 
-#Removal of   BusinessTravel.xTravel_Frequently 
+#Removal of   Sep 
 model_24<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
-                YearsSinceLastPromotion + YearsWithCurrManager + 
+                YearsSinceLastPromotion + YearsWithCurrManager + BusinessTravel.xTravel_Frequently + 
                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
-                Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3,data=train,family = "binomial")
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 +WorkLifeBalance.x3 + 
+                Oct ,data=train,family = "binomial")
 summary(model_24)
 vif(model_24)
 
 
-#Removal of  BusinessTravel.xTravel_Rarely  
+#Removal of  BusinessTravel.xTravel_Frequently 
 model_25<-glm(Attrition ~ Age + NumCompaniesWorked + 
-                TotalWorkingYears + TrainingTimesLastYear + 
-                YearsSinceLastPromotion + YearsWithCurrManager + 
-                 Department.xResearch...Development + 
-                Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 + WorkLifeBalance.x2 + WorkLifeBalance.x3,data=train,family = "binomial")
+                 TotalWorkingYears + TrainingTimesLastYear + 
+                 YearsSinceLastPromotion + YearsWithCurrManager + 
+                 BusinessTravel.xTravel_Rarely + Department.xResearch...Development + 
+                 Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                 EnvironmentSatisfaction.x4 +JobSatisfaction.x4 +WorkLifeBalance.x3 + 
+                 Oct ,data=train,family = "binomial")
 summary(model_25)
 vif(model_25)
 
 
-#Removal of  WorkLifeBalance.x2  
+#Removal of  BusinessTravel.xTravel_Rarely 
 model_26<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + 
-                Department.xResearch...Development + 
-                Department.xSales + MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 +  WorkLifeBalance.x3,data=train,family = "binomial")
+                 Department.xResearch...Development + 
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 +WorkLifeBalance.x3 + 
+                Oct ,data=train,family = "binomial")
 summary(model_26)
 vif(model_26)
 
 
-#Removal of Department.xSales  
+#Removal of WorkLifeBalance.x3
 model_27<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + 
                 Department.xResearch...Development + 
-                 MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 +  WorkLifeBalance.x3,data=train,family = "binomial")
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 + 
+                Oct ,data=train,family = "binomial")
 summary(model_27)
 vif(model_27)
 
@@ -568,30 +752,30 @@ vif(model_27)
 model_28<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + 
-                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 +  WorkLifeBalance.x3,data=train,family = "binomial")
+                Department.xSales+MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 + 
+                Oct ,data=train,family = "binomial")
 summary(model_28)
 vif(model_28)
 
 
-#Removal of   WorkLifeBalance.x3  
+#Removal of   Department.xSales 
 model_29<-glm(Attrition ~ Age + NumCompaniesWorked + 
                 TotalWorkingYears + TrainingTimesLastYear + 
                 YearsSinceLastPromotion + YearsWithCurrManager + 
-                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 ,data=train,family = "binomial")
+                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 + 
+                Oct ,data=train,family = "binomial")
 summary(model_29)
 vif(model_29)
 
 
 #Removal of   TotalWorkingYears 
 model_30<-glm(Attrition ~ Age + NumCompaniesWorked + 
-                TrainingTimesLastYear +YearsSinceLastPromotion + YearsWithCurrManager + 
-                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 +
-                EnvironmentSatisfaction.x3 +EnvironmentSatisfaction.x4 + 
-                JobSatisfaction.x4 ,data=train,family = "binomial")
+                TrainingTimesLastYear+YearsSinceLastPromotion + YearsWithCurrManager + 
+                MaritalStatus.xSingle + EnvironmentSatisfaction.x2 + EnvironmentSatisfaction.x3 + 
+                EnvironmentSatisfaction.x4 +JobSatisfaction.x4 + 
+                Oct ,data=train,family = "binomial")
 summary(model_30)
 vif(model_30)
 
@@ -603,12 +787,21 @@ summary(Predict_2)
 test$prob<-Predict_2
 View(test)
 
-test_pred_attrition<-factor(ifelse(Predict_2>0.145,"yes","no"))
+test_pred_attrition<-factor(ifelse(Predict_2>0.158,"yes","no"))
 test_actual_attrition<-factor(ifelse(test$Attrition==1,"yes","no"))
 
 table_1<-table(test_actual_attrition,test_pred_attrition)
 
+#calculation of confusion matrix
 test_conf<-confusionMatrix(test_pred_attrition,test_actual_attrition,positive = "yes")
 conf_values<-test_conf
 conf_values
+
+
+
+
+
+
+
+
 
