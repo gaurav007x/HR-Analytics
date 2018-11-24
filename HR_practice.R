@@ -1,3 +1,18 @@
+
+#Loading libraries
+library(MASS)
+library(car)
+library(e1071)
+library(caret)
+library(cowplot)
+library(caTools)
+library(stringr)
+library(lubridate)
+library(dplyr)
+library(ROCR)
+
+
+
 genD<-read.csv("general_data.csv")
 esd<-read.csv("employee_survey_data.csv")
 msd<-read.csv("manager_survey_data.csv")
@@ -180,9 +195,7 @@ all<-cbind(all[,-c(4, 5, 7, 8, 10, 11, 12, 22, 23, 24, 25)], data.frame(sapply(a
 
 
 
-library(stringr)
-library(lubridate)
-library(dplyr)
+
 
 ####Loading the datasets####
 in_time <- read.csv("in_time.csv",stringsAsFactors = FALSE)
@@ -267,7 +280,10 @@ for (i in 1:nrow(in_time1)) {
   } 
 }
 
-all_updated<-cbind(all,ave_working_hour)
+ave_working_hour<-cbind(customer_id,ave_working_hour)
+
+####data merge and cleanup####
+all_updated<-merge(x=all,y=ave_working_hour,by.x = "EmployeeID",by.y = "customer_id")
 str(all_updated)
 
 
@@ -362,12 +378,7 @@ all_updated$Dec<-scale(all_updated$Dec)
 
 
 
-library(MASS)
-library(car)
-library(e1071)
-library(caret)
-library(cowplot)
-library(caTools)
+
 
 #deviding the data set into training and testing data
 set.seed(100)
@@ -798,10 +809,46 @@ conf_values<-test_conf
 conf_values
 
 
+#on testing  data
+
+test_pred_attr<-ifelse(test_pred_attrition=="yes",1,0)
+test_actual_attr<-ifelse(test_actual_attrition=="yes",1,0)
+View(test_pred_attrition)
+pred_test<- prediction(test_pred_attr, test_actual_attr)
+
+performance_test<- performance(pred_test, "tpr", "fpr")
+
+ks_table_test <- attr(performance_test, "y.values")[[1]] - 
+  (attr(performance_test, "x.values")[[1]])
+
+max(ks_table_test)
+
+lift <- function(labels , predict,groups=10) {
+  
+  if(is.factor(labels)) labels  <- as.integer(as.character(labels ))
+  if(is.factor(predict)) predict <- as.integer(as.character(predict))
+  helper = data.frame(cbind(labels , predict))
+  helper[,"bucket"] = ntile(-helper[,"predict"], groups)
+  gaintable = helper %>% group_by(bucket)  %>%
+    summarise_at(vars(labels ), funs(total = n(),
+                                     totalresp=sum(., na.rm = TRUE))) %>%
+    
+    mutate(Cumresp = cumsum(totalresp),
+           Gain=Cumresp/sum(totalresp)*100,
+           Cumlift=Gain/(bucket*(100/groups))) 
+  return(gaintable)
+}
+
+Churn_decile = lift(test_actual_attr, Predict_2, groups = 10)
+View(Churn_decile)
 
 
+ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Gain,group=1,
+        label=sprintf("%0.2f", round(Gain, digits = 2))))+ geom_line()+geom_point()+
+      geom_text(aes(hjust=0, vjust=1))
 
 
-
-
-
+ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Cumlift,group=1,
+                        label=sprintf("%0.2f", round(Churn_decile$Cumlift, digits = 2))))+ geom_line()+geom_point()+
+  geom_text(aes(hjust=0, vjust=-.2))+geom_hline(yintercept = 1)+xlab("Bucket") +
+  ylab("Cumlift")+labs(title="Lift Chart")

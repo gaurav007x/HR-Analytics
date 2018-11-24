@@ -15,7 +15,7 @@ colnames(out_time)[1] <- "CustomerID"
 #Checking na values in both data set
 in_na<-which(is.na(in_time))
 out_na<-which(is.na(out_time))
-sum(c!=d)
+sum(in_na!=out_na)
 
 
 customer_id <- in_time$CustomerID
@@ -53,7 +53,8 @@ difference<-mutate_all(difference, function(x) as.numeric(as.character(x)))
 
 #Creating column name for 'FOR' Condition
 colname<-as.Date(substring(colnames(in_time1),2),format = "%Y.%m.%d")
-
+sum(is.na(colname))
+colname
 #Creation of monthly avg dataset 
 for (i in 1:nrow(in_time1)) {
      sum=difference[i,1]
