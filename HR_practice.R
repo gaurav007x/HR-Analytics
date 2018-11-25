@@ -841,18 +841,18 @@ lift <- function(labels , predict,groups=10) {
   return(gaintable)
 }
 
-Churn_decile = lift(test_actual_attr, Predict_2, groups = 10)
-View(Churn_decile)
+attr_decile = lift(test_actual_attr, Predict_2, groups = 10)
+View(attr_decile)
 
 
-gain_plot<-ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Gain,group=1,
+gain_plot<-ggplot(attr_decile,aes(as.factor(attr_decile$bucket),attr_decile$Gain,group=1,
         label=sprintf("%0.2f", round(Gain, digits = 2))))+ geom_line()+geom_point()+
       geom_text(aes(hjust=0, vjust=1))+xlab("Bucket") +
   ylab("Gain")+labs(title="Gain Chart")
 
 
 
-lift_plot<-ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Cumlift,group=1,
-                        label=sprintf("%0.2f", round(Churn_decile$Cumlift, digits = 2))))+ geom_line()+geom_point()+
+lift_plot<-ggplot(attr_decile,aes(as.factor(attr_decile$bucket),attr_decile$Cumlift,group=1,
+                        label=sprintf("%0.2f", round(attr_decile$Cumlift, digits = 2))))+ geom_line()+geom_point()+
   geom_text(aes(hjust=0, vjust=-.2))+geom_hline(yintercept = 1)+xlab("Bucket") +
   ylab("Cumlift")+labs(title="Lift Chart")
