@@ -17,9 +17,9 @@ genD<-read.csv("general_data.csv")
 esd<-read.csv("employee_survey_data.csv")
 msd<-read.csv("manager_survey_data.csv")
 #merge all three
-setdiff(genD$CustomerID, esd$CustomerID)#IDs are same
+setdiff(genD$EmployeeID, esd$EmployeeID)#IDs are same
 all<-merge(genD, esd, by="EmployeeID")
-setdiff(genD$CustomerID, msd$CustomerID)#IDs are same
+setdiff(genD$EmployeeID, msd$EmployeeID)#IDs are same
 all<-merge(all, msd, by="EmployeeID")
 #check structure and summary of the dataframe
 str(all)
@@ -197,13 +197,13 @@ all<-cbind(all[,-c(4, 5, 7, 8, 10, 11, 12, 22, 23, 24, 25)], data.frame(sapply(a
 
 
 
-####Loading the datasets####
+####Loading in_time and out_time datasets####
 in_time <- read.csv("in_time.csv",stringsAsFactors = FALSE)
 out_time <- read.csv("out_time.csv",stringsAsFactors = FALSE)
 
 
 
-#### Cleaning in-time and out time####
+#### Cleaning in_time and out_time####
 #First Column Name
 colnames(in_time)[1] <- "CustomerID"
 colnames(out_time)[1] <- "CustomerID"
@@ -234,14 +234,14 @@ for(i in 1:ncol(out_time1)){
 }
 
 
-#### working on dataset####
 
-#Creating data frame for storage
+
+#Creating data frame for average office time storage
 ave_working_hour <- data.frame(matrix(nrow = nrow(in_time1), ncol = 12))
 colnames(ave_working_hour)<-c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
 ave_working_hour[is.na(ave_working_hour)] <- 0
 
-#Creating difference column for calculating difference in time.
+#Creating difference dataframe for calculating difference in time.
 
 difference<-(out_time1-in_time1)*60
 difference[is.na(difference)] <- 0
@@ -251,7 +251,7 @@ difference<-mutate_all(difference, function(x) as.numeric(as.character(x)))
 colname<-as.Date(substring(colnames(in_time1),2),format = "%Y.%m.%d")
 sum(is.na(colname))
 
-#Creation of monthly avg dataset 
+#population of monthly avg dataset 
 for (i in 1:nrow(in_time1)) {
   sum=difference[i,1]
   Days=0
@@ -269,7 +269,7 @@ for (i in 1:nrow(in_time1)) {
       
     }
       
-      
+
       
       else{
         sum=sum+difference[i,j]
@@ -282,7 +282,9 @@ for (i in 1:nrow(in_time1)) {
 
 ave_working_hour<-cbind(customer_id,ave_working_hour)
 
-####data merge and cleanup####
+#merging average office times with all dataset
+                 
+setdiff(all$EmployeeID, ave_working_hour$customer_id)#IDs are same
 all_updated<-merge(x=all,y=ave_working_hour,by.x = "EmployeeID",by.y = "customer_id")
 str(all_updated)
 
@@ -380,7 +382,7 @@ all_updated$Dec<-scale(all_updated$Dec)
 
 
 
-#deviding the data set into training and testing data
+#dividing the data set into training and testing data
 set.seed(100)
 indices=sample.split(all_updated$Attrition,SplitRatio=0.7)
 train=all_updated[indices,]
@@ -392,7 +394,7 @@ model_1<-glm(Attrition~.-1,data=train,family ="binomial")
 summary(model_1)
 
 
-#checking for multi colinearity in the variables
+#creating optimal model automatically with stepAIC
 model_2<-stepAIC(model_1,direction="both")
 summary(model_2)
 vif(model_2)
@@ -809,7 +811,7 @@ conf_values<-test_conf
 conf_values
 
 
-#on testing  data
+#calculation of KS statistic and lift and gain chart
 
 test_pred_attr<-ifelse(test_pred_attrition=="yes",1,0)
 test_actual_attr<-ifelse(test_actual_attrition=="yes",1,0)
@@ -822,7 +824,7 @@ ks_table_test <- attr(performance_test, "y.values")[[1]] -
   (attr(performance_test, "x.values")[[1]])
 
 max(ks_table_test)
-
+#function for finding lift and gain
 lift <- function(labels , predict,groups=10) {
   
   if(is.factor(labels)) labels  <- as.integer(as.character(labels ))
@@ -843,12 +845,14 @@ Churn_decile = lift(test_actual_attr, Predict_2, groups = 10)
 View(Churn_decile)
 
 
-ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Gain,group=1,
+gain_plot<-ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Gain,group=1,
         label=sprintf("%0.2f", round(Gain, digits = 2))))+ geom_line()+geom_point()+
-      geom_text(aes(hjust=0, vjust=1))
+      geom_text(aes(hjust=0, vjust=1))+xlab("Bucket") +
+  ylab("Gain")+labs(title="Gain Chart")
 
 
-ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Cumlift,group=1,
+
+lift_plot<-ggplot(Churn_decile,aes(as.factor(Churn_decile$bucket),Churn_decile$Cumlift,group=1,
                         label=sprintf("%0.2f", round(Churn_decile$Cumlift, digits = 2))))+ geom_line()+geom_point()+
   geom_text(aes(hjust=0, vjust=-.2))+geom_hline(yintercept = 1)+xlab("Bucket") +
   ylab("Cumlift")+labs(title="Lift Chart")
